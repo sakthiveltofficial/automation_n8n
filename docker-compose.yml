@@ -21,8 +21,8 @@ services:
     image: n8nio/n8n:latest
     container_name: n8n_app
     restart: unless-stopped
-    ports:
-      - "5678:5678"
+    expose:
+      - "5678"
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,11 +37,24 @@ services:
       - N8N_BASIC_AUTH_USER=admin
       - N8N_BASIC_AUTH_PASSWORD=admin123
       - N8N_RUNNERS_ENABLED=true
-      # Optional: allow external modules via Function node
       - NODE_FUNCTION_ALLOW_EXTERNAL=axios,qs
       - N8N_SECURE_COOKIE=false
+      - WEBHOOK_URL=http://automation.webnoxdigital.com
+      - N8N_HOST=automation.webnoxdigital.com
+      - N8N_PORT=5678
     volumes:
       - ./n8n-data:/home/node/.n8n
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - n8n
 
 volumes:
   postgres-data:
