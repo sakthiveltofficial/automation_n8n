@@ -20,7 +20,7 @@ services:
       retries: 5
 
   n8n:
-    image: n8nio/n8n:latest   # Using latest stable image
+    image: n8nio/n8n:latest
     container_name: n8n_app
     restart: unless-stopped
     expose:
@@ -47,9 +47,9 @@ services:
       - WEBHOOK_URL=http://automation.webnoxdigital.com
       - N8N_HOST=automation.webnoxdigital.com
       - N8N_PORT=5678
-    command: n8n start
     volumes:
       - ./n8n-data:/home/node/.n8n
+
 
   nginx:
     image: nginx:latest
