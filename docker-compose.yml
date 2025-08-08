@@ -16,11 +16,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
   n8n:
     image: n8nio/n8n:latest
     container_name: n8n_app
     restart: unless-stopped
+    command: n8n start    # <--- ADD THIS LINE
     expose:
       - "5678"
     depends_on:
@@ -46,7 +46,7 @@ services:
       - N8N_HOST=automation.webnoxdigital.com
       - N8N_PORT=5678
     volumes:
-      - ./n8n-data:/home/node/.n8n  # Bind mount for persistence
+      - ./n8n-data:/home/node/.n8n
 
   nginx:
     image: nginx:latest
