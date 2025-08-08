@@ -19,16 +19,12 @@ services:
   #     retries: 5
 
   n8n:
-    image: n8nio/n8n:nightly
+    image: n8nio/n8n:latest
     container_name: n8n_app_new
     restart: unless-stopped
     expose:
       - "5678"
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
     environment:
-      # No Postgres env vars = use default SQLite
       N8N_BASIC_AUTH_ACTIVE: "true"
       N8N_BASIC_AUTH_USER: admin
       N8N_BASIC_AUTH_PASSWORD: admin123
@@ -43,7 +39,6 @@ services:
       N8N_PORT: 5678
     volumes:
       - ./n8n-data:/home/node/.n8n
-    command: ["n8n", "start"]
 
   nginx:
     image: nginx:latest
