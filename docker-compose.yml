@@ -20,7 +20,7 @@ services:
       retries: 5
 
   n8n:
-    image: n8nio/n8n:1.61.1   # pinned stable version
+    image: n8nio/n8n:latest   # Using latest stable image
     container_name: n8n_app
     restart: unless-stopped
     expose:
