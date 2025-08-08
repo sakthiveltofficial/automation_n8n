@@ -3,7 +3,7 @@ version: "3.8"
 services:
   postgres:
     image: postgres:15
-    container_name: n8n_postgres
+    container_name: n8n_postgres_new
     restart: unless-stopped
     environment:
       POSTGRES_USER: n8n
@@ -21,7 +21,7 @@ services:
 
   n8n:
     image: n8nio/n8n:latest
-    container_name: n8n_app
+    container_name: n8n_app_new
     restart: unless-stopped
     expose:
       - "5678"
