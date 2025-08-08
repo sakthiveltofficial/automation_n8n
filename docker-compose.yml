@@ -1,64 +1,66 @@
-  services:
-    postgres:
-      image: postgres:15
-      container_name: n8n_postgres
-      restart: unless-stopped
-      environment:
-        POSTGRES_USER: n8n
-        POSTGRES_PASSWORD: n8n_password
-        POSTGRES_DB: n8n
-      ports:
-        - "5432:5432"
-      volumes:
-        - postgres-data:/var/lib/postgresql/data
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U n8n -d n8n"]
-        interval: 5s
-        timeout: 5s
-        retries: 5
+version: '3.9'
 
-    n8n:
-      image: n8nio/n8n:latest
-      container_name: n8n_app
-      restart: unless-stopped
-      expose:
-        - "5678"
-      depends_on:
-        postgres:
-          condition: service_healthy
-      environment:
-        - DB_TYPE=postgresdb
-        - DB_POSTGRESDB_HOST=postgres
-        - DB_POSTGRESDB_PORT=5432
-        - DB_POSTGRESDB_DATABASE=n8n
-        - DB_POSTGRESDB_USER=n8n
-        - DB_POSTGRESDB_PASSWORD=n8n_password
-        - N8N_BASIC_AUTH_ACTIVE=true
-        - N8N_BASIC_AUTH_USER=admin
-        - N8N_BASIC_AUTH_PASSWORD=admin123
-        - N8N_RUNNERS_ENABLED=true
-        - NODE_FUNCTION_ALLOW_EXTERNAL=axios,qs
-        - N8N_SECURE_COOKIE=false
-        - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-        - N8N_EXPRESS_TRUST_PROXY=true
-        - GENERIC_TIMEZONE=UTC
-        - WEBHOOK_URL=http://automation.webnoxdigital.com
-        - N8N_HOST=automation.webnoxdigital.com
-        - N8N_PORT=5678
-      volumes:
-        - ./n8n-data:/home/node/.n8n
+services:
+  postgres:
+    image: postgres:15
+    container_name: n8n_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8n_password
+      POSTGRES_DB: n8n
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U n8n -d n8n"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-    nginx:
-      image: nginx:latest
-      container_name: nginx_proxy
-      restart: unless-stopped
-      ports:
-        - "80:80"
-      volumes:
-        - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      depends_on:
-        - n8n
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_app
+    restart: unless-stopped
+    expose:
+      - "5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_password
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - N8N_RUNNERS_ENABLED=true
+      - NODE_FUNCTION_ALLOW_EXTERNAL=axios,qs
+      - N8N_SECURE_COOKIE=false
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_EXPRESS_TRUST_PROXY=true
+      - GENERIC_TIMEZONE=UTC
+      - WEBHOOK_URL=http://automation.webnoxdigital.com
+      - N8N_HOST=automation.webnoxdigital.com
+      - N8N_PORT=5678
+    volumes:
+      - n8n-data:/home/node/.n8n   # Named volume to avoid empty mount issue
 
-  volumes:
-    postgres-data:
-    n8n-data:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - n8n
+
+volumes:
+  postgres-data:
+  n8n-data:
