@@ -20,7 +20,7 @@ services:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: n8n_app
     restart: unless-stopped
-    command: start
+    command: n8n start
     expose:
       - "5678"
     depends_on:
@@ -42,6 +42,7 @@ services:
       - N8N_PORT=5678
     volumes:
       - ./n8n-data:/home/node/.n8n
+
   nginx:
     image: nginx:latest
     container_name: nginx_proxy
